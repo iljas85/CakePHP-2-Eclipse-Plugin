@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.php.core.phpSourceElementRequestors">
+       <requestor
+           class="com.github.iljas85.CakePHP2EclipsePlugin.SourceElementRequestor">
+       </requestor>
+   </extension>
+
+</plugin>

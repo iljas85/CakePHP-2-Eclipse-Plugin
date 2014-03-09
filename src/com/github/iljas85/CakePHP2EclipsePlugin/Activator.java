@@ -1,4 +1,4 @@
-package cakephp_2_eclipse_plugin;
+package com.github.iljas85.CakePHP2EclipsePlugin;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
