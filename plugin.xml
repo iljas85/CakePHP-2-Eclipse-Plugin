@@ -7,5 +7,13 @@
            class="com.github.iljas85.CakePHP2EclipsePlugin.SourceElementRequestor">
        </requestor>
    </extension>
+   <extension
+         point="org.eclipse.php.core.completionContextResolvers">
+       <resolver class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerFieldContextResolver"/>
+   </extension>
+   <extension
+         point="org.eclipse.php.core.completionStrategyFactories">
+       <factory class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerFieldCompletionStrategyFactory"/>
+   </extension>
 
 </plugin>

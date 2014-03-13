@@ -14,4 +14,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.eclipse.dltk.ast.declarations,
  org.eclipse.dltk.ast.expressions,
- org.eclipse.dltk.compiler
+ org.eclipse.dltk.compiler,
+ org.eclipse.jface.text
