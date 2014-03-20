@@ -2,6 +2,7 @@ package com.github.iljas85.CakePHP2EclipsePlugin;
 
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
+import org.eclipse.dltk.core.ModelException;
 import org.eclipse.php.internal.core.codeassist.CodeAssistUtils;
 import org.eclipse.php.internal.core.util.text.PHPTextSequenceUtilities;
 import org.eclipse.php.internal.core.util.text.TextSequence;
@@ -21,6 +22,16 @@ public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
 	public static IType[] getTypesFor(ISourceModule sourceModule,
 			TextSequence statementText, int endPosition, int offset) {
 		
+		String className = "";
+		try {
+			IType[] tps = sourceModule.getTypes();
+			if (tps.length > 0) {
+				className = tps[0].getFullyQualifiedName();
+			}
+		} catch (ModelException e) {
+			//Logger.log(e.getMessage());
+		}
+		
 		String triggerText = statementText.subSequence(endPosition - 2,
 				endPosition).toString();
 
@@ -30,9 +41,8 @@ public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
 			return EMPTY_TYPES_2;
 		}
 		
-		// TODO check if it starts with $this and it is access to Post field and no more
 		ControllerFieldResolver factorySearcher = new ControllerFieldResolver(
-				statementText);
+				statementText, className);
 
 		if (!factorySearcher.containsFactoryCall()) {
 			return EMPTY_TYPES_2;

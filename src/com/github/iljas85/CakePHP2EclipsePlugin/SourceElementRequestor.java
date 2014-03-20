@@ -13,6 +13,10 @@ import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPFieldDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
 import org.eclipse.dltk.compiler.ISourceElementRequestor;
+import org.modeshape.common.text.Inflector;
+
+import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
+import com.github.iljas85.CakePHP2EclipsePlugin.index.ControllerFieldType;
 
 @SuppressWarnings("restriction")
 public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
@@ -28,11 +32,14 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 		return true;
 	}
 	
-	private void addDefaultModel() {
+	private void addDefaultModel() throws Exception {
 		Inflector inf = new Inflector();
 		String modelName = inf.singularize(currentClass.getName().replaceAll("Controller$", ""));
 		Scalar model = new Scalar(currentClass.getNameStart(), currentClass.getNameEnd(), modelName, Scalar.TYPE_STRING);
 		deferredFields.add(model);
+		
+		CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
+		indexer.addControllerField(currentClass.getName(), model.getValue(), ControllerFieldType.MODEL);
 	}
 	
 	public boolean endvisit(TypeDeclaration s) throws Exception {
@@ -56,24 +63,21 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	
 	public boolean visit(PHPFieldDeclaration s) throws Exception {
 		if (s.getVariableValue() instanceof ArrayCreation) {
-			String postfix = "";
+			ControllerFieldType type = ControllerFieldType.MODEL;
+			CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
 			boolean magicField = false;
 			if (s.getName().equals("$helpers")) {
 				//Html -> HtmlHelper
-				postfix = "Helper";
+				type = ControllerFieldType.HELPER;
 				magicField = true;
-				
-				//TODO add helpers from AppController
 			}
 			if (s.getName().equals("$components")) {
 				//Session -> SessionComponent
-				postfix = "Component";
+				type = ControllerFieldType.COMPONENT;
 				magicField = true;
-				
-				//TODO add components from AppController
 			}
 			if (s.getName().equals("$uses")) {
-				postfix = "";
+				type = ControllerFieldType.MODEL;
 				magicField = true;
 			}
 			if (magicField) {
@@ -84,6 +88,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 						Scalar scalar = (Scalar) name;
 						if (scalar.getScalarType() == Scalar.TYPE_STRING) {
 							deferredFields.add(scalar);
+							indexer.addControllerField(currentClass.getName(), scalar.getValue().replaceAll("['\"]", ""), type);
 						}
 					}
 				}

@@ -7,15 +7,27 @@ import java.util.regex.Matcher;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
 import org.eclipse.php.internal.core.util.text.TextSequence;
 
+import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
+
 @SuppressWarnings("restriction")
 public class ControllerFieldResolver {
 
-	private String effectiveClassName;
+	private String effectiveClassName = "";
 	private int offset = 0;
-	private HashMap<String, String> fields;
+	private HashMap<String, String> fields = new HashMap<String, String>();
+	private String controllerName;
 
-	public ControllerFieldResolver(TextSequence inputString) {
+	public ControllerFieldResolver(TextSequence inputString, String className) {
 
+		if (!className.endsWith("Controller")) {
+			return;
+		}
+		else
+		{
+			controllerName = className;
+		}
+
+		
 		Pattern factoryPattern = Pattern
 				.compile("\\s*[$]this\\s*[-][>]\\s*(\\w+)\\s*");
 
@@ -23,14 +35,24 @@ public class ControllerFieldResolver {
 		if (classNameSearcher.find()) {
 			effectiveClassName = getClassname(classNameSearcher.group(1));
 			offset = classNameSearcher.end();
+			
+			collectFields();
+		}
+	}
+	
+	private void collectFields() {
+		try {
+			CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
+			fields.putAll(indexer.getFieldsForController(controllerName));
+			fields.putAll(indexer.getFieldsForController("AppController"));
+		} catch (Exception e) {
+			//Logger.log(e.getMessage());
 		}
 		
-		fields = new HashMap<String, String>();
-		fields.put("Html", "HtmlHelper");
 	}
 
 	/**
-	 * Returns true if input string contains factory call.
+	 * Returns true if input string contains controller magic field access
 	 *
 	 * @return true or false
 	 */
@@ -40,7 +62,7 @@ public class ControllerFieldResolver {
 	}
 
 	/**
-	 * Returns PHP type deducted from factory call
+	 * Returns PHP type controller magic field
 	 *
 	 * @return PHP class type
 	 */
@@ -49,7 +71,7 @@ public class ControllerFieldResolver {
 	}
 
 	/**
-	 * Returns offset in context string where Factory::get static call ends.
+	 * Returns offset in context string where controller magic field access ends.
 	 *
 	 * @return end position of broker call
 	 */
@@ -61,23 +83,10 @@ public class ControllerFieldResolver {
 	 * Transforms supplied parameter into PHP class name according to defined
 	 * conventions.
 	 *
-	 * 'abc' -> My_Abc
-	 *
 	 * @param className
 	 * @return
 	 */
 	public static String getClassname(String className) {
-
 		return className;
-		
-		/*if (className.length() < 1) {
-			return "";
-		}
-
-		String classPrefix = "Prefix_";
-		String capitalizedClassName = className.substring(0, 1).toUpperCase()
-				+ className.substring(1);
-
-		return classPrefix + capitalizedClassName;*/
 	}
 }
