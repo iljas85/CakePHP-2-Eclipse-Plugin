@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.core.IField;
 import org.eclipse.dltk.core.IMethod;
 import org.eclipse.dltk.core.IType;
@@ -16,16 +15,16 @@ import org.eclipse.php.internal.core.codeassist.ICompletionReporter;
 import org.eclipse.php.internal.core.codeassist.contexts.AbstractCompletionContext;
 import org.eclipse.php.internal.core.codeassist.contexts.ClassMemberContext;
 import org.eclipse.php.internal.core.codeassist.strategies.ClassMembersStrategy;
-import org.eclipse.php.internal.core.typeinference.FakeMethod;
-import org.eclipse.php.internal.core.typeinference.FakeField;
 import org.eclipse.php.internal.core.typeinference.PHPModelUtils;
 import org.eclipse.php.internal.core.util.text.PHPTextSequenceUtilities;
 import org.eclipse.php.internal.core.util.text.TextSequence;
-import org.eclipse.dltk.internal.core.ModelElement;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.dltk.core.CompletionRequestor;
 import org.eclipse.dltk.internal.core.SourceRange;
 
+/**
+ * This code is taken from https://sites.google.com/site/50percentplan/eclipse
+ */
 @SuppressWarnings("restriction")
 public class ControllerFieldCompletionStrategy extends ClassMembersStrategy
 		implements ICompletionStrategy {

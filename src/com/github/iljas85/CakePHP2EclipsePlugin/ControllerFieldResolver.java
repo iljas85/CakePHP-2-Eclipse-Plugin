@@ -12,7 +12,7 @@ import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 @SuppressWarnings("restriction")
 public class ControllerFieldResolver {
 
-	private String effectiveClassName = "";
+	private String fieldName = "";
 	private int offset = 0;
 	private HashMap<String, String> fields = new HashMap<String, String>();
 	private String controllerName;
@@ -33,7 +33,7 @@ public class ControllerFieldResolver {
 
 		Matcher classNameSearcher = factoryPattern.matcher(inputString);
 		if (classNameSearcher.find()) {
-			effectiveClassName = getClassname(classNameSearcher.group(1));
+			fieldName = getFieldName(classNameSearcher.group(1));
 			offset = classNameSearcher.end();
 			
 			collectFields();
@@ -57,17 +57,17 @@ public class ControllerFieldResolver {
 	 * @return true or false
 	 */
 	public boolean containsFactoryCall() {
-		return !effectiveClassName.isEmpty() 
-				&& fields.containsKey(effectiveClassName);
+		return !fieldName.isEmpty() 
+				&& fields.containsKey(fieldName);
 	}
 
 	/**
-	 * Returns PHP type controller magic field
+	 * Returns PHP controller magic field
 	 *
 	 * @return PHP class type
 	 */
 	public PHPClassType getClassType() {
-		return new PHPClassType(fields.get(effectiveClassName));
+		return new PHPClassType(fields.get(fieldName));
 	}
 
 	/**
@@ -80,13 +80,13 @@ public class ControllerFieldResolver {
 	}
 
 	/**
-	 * Transforms supplied parameter into PHP class name according to defined
+	 * Transforms supplied parameter into PHP class field name according to defined
 	 * conventions.
 	 *
 	 * @param className
 	 * @return
 	 */
-	public static String getClassname(String className) {
-		return className;
+	public static String getFieldName(String fieldName) {
+		return fieldName;
 	}
 }

@@ -13,13 +13,13 @@ public class ControllerFieldCompletionStrategyFactory implements
 	@Override
 	public ICompletionStrategy[] create(ICompletionContext[] contexts) {
 		List<ICompletionStrategy> result = new LinkedList<ICompletionStrategy>();
-	    for (ICompletionContext context : contexts) {
-	      if (context.getClass() == ControllerFieldCompletionContext.class) {
-	        result.add(new ControllerFieldCompletionStrategy(context));
-	      }
-	    }
-	    return (ICompletionStrategy[]) result
-	        .toArray(new ICompletionStrategy[result.size()]);
+		for (ICompletionContext context : contexts) {
+			if (context.getClass() == ControllerFieldCompletionContext.class) {
+				result.add(new ControllerFieldCompletionStrategy(context));
+			}
+		}
+		return (ICompletionStrategy[]) result
+				.toArray(new ICompletionStrategy[result.size()]);
 	}
 
 }

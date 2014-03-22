@@ -27,11 +27,18 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	public boolean visit(TypeDeclaration s) throws Exception {
 		if (s instanceof ClassDeclaration) {
 			currentClass = (ClassDeclaration) s;
+			// TODO clean fields in index
 			addDefaultModel();
 		}
 		return true;
 	}
 	
+	/**
+	 * Adds model associated with controller,
+	 * e.g. Post for PostsController
+	 * 
+	 * @throws Exception
+	 */
 	private void addDefaultModel() throws Exception {
 		Inflector inf = new Inflector();
 		String modelName = inf.singularize(currentClass.getName().replaceAll("Controller$", ""));
@@ -62,6 +69,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	}
 	
 	public boolean visit(PHPFieldDeclaration s) throws Exception {
+		//TODO consider case Js => JsPrototype
 		if (s.getVariableValue() instanceof ArrayCreation) {
 			ControllerFieldType type = ControllerFieldType.MODEL;
 			CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();

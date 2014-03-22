@@ -14,6 +14,9 @@ import org.eclipse.php.internal.core.compiler.ast.parser.ASTUtils;
 import org.eclipse.dltk.core.SourceParserUtil;
 import org.eclipse.dltk.ti.ISourceModuleContext;
 
+/**
+ * This code is taken from https://sites.google.com/site/50percentplan/eclipse
+ */
 @SuppressWarnings("restriction")
 public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
 
