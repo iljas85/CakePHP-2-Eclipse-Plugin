@@ -78,6 +78,13 @@ public class JpaTest extends TestCase {
 		}
 		assertTrue(fail);
 		
+		em.getTransaction().begin();
+		em.createQuery("DELETE FROM Employee e " +
+				"WHERE e.name = :name")
+			.setParameter("name", "me")
+			.executeUpdate();
+		em.getTransaction().commit();
+		
 		em.close();
 	}
 }

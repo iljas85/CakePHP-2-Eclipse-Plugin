@@ -45,12 +45,13 @@ public class CakePHP2Indexer {
 		return result;
 	}
 	
-	public void addControllerField(String controllerName, String fieldName, ControllerFieldType fieldType) {
+	public void addControllerField(String fileName, String controllerName, String fieldName, ControllerFieldType fieldType) {
 		TypedQuery<Controller> query = em
 			.createQuery(
-				"SELECT c FROM Controller c WHERE c.name = :name",
+				"SELECT c FROM Controller c WHERE c.name = :name AND c.fileName = :fileName",
 				Controller.class)
-			.setParameter("name", controllerName);
+			.setParameter("name", controllerName)
+			.setParameter("fileName", fileName);
 		Controller ctrl = null;
 		try {
 			ctrl = query.getSingleResult();
@@ -58,6 +59,7 @@ public class CakePHP2Indexer {
 			em.getTransaction().begin();
 			ctrl = new Controller();
 			ctrl.setName(controllerName);
+			ctrl.setFileName(fileName);
 			em.persist(ctrl);
 			em.getTransaction().commit();
 		}
@@ -65,11 +67,12 @@ public class CakePHP2Indexer {
 		
 		TypedQuery<ControllerField> query2 = em
 				.createQuery(
-					"SELECT f FROM ControllerField f WHERE f.name = :fname AND f.controller.name = :cname AND f.type = :type",
+					"SELECT f FROM ControllerField f WHERE f.name = :fname AND f.controller.name = :cname AND f.type = :type AND f.controller.fileName = :fileName",
 					ControllerField.class)
 				.setParameter("cname", controllerName)
 				.setParameter("fname", fieldName)
-				.setParameter("type", fieldType);
+				.setParameter("type", fieldType)
+				.setParameter("fileName", fileName);
 		ControllerField field = null;
 		try {
 			field = query2.getSingleResult();
@@ -95,5 +98,15 @@ public class CakePHP2Indexer {
 			postfix = "";
 		
 		return fieldName + postfix;
+	}
+	
+	public void removeControllerFields(String fileName, String controllerName) {
+		em.getTransaction().begin();
+		em.createQuery("DELETE FROM ControllerField f " +
+				"WHERE f.controller.name = :name AND f.controller.fileName = :fileName")
+			.setParameter("name", controllerName)
+			.setParameter("fileName", fileName)
+			.executeUpdate();
+		em.getTransaction().commit();
 	}
 }

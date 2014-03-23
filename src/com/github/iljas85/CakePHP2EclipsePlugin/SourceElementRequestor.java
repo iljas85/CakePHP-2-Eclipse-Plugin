@@ -23,14 +23,21 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	
 	private ClassDeclaration currentClass;
 	private Set<Scalar> deferredFields = new HashSet<Scalar>();
+	private String fileName = "";
 	
 	public boolean visit(TypeDeclaration s) throws Exception {
 		if (s instanceof ClassDeclaration) {
 			currentClass = (ClassDeclaration) s;
-			// TODO clean fields in index
+			fileName = getSourceModule().getFileName();
+			cleanClassFields();
 			addDefaultModel();
 		}
 		return true;
+	}
+	
+	private void cleanClassFields() throws Exception {
+		CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
+		indexer.removeControllerFields(fileName, currentClass.getName());
 	}
 	
 	/**
@@ -46,11 +53,12 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 		deferredFields.add(model);
 		
 		CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
-		indexer.addControllerField(currentClass.getName(), model.getValue(), ControllerFieldType.MODEL);
+		indexer.addControllerField(fileName, currentClass.getName(), model.getValue(), ControllerFieldType.MODEL);
 	}
 	
 	public boolean endvisit(TypeDeclaration s) throws Exception {
 		currentClass = null;
+		fileName = "";
 		
 		for (Scalar field : deferredFields) {
 			ISourceElementRequestor.FieldInfo fieldInfo =
@@ -96,7 +104,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 						Scalar scalar = (Scalar) name;
 						if (scalar.getScalarType() == Scalar.TYPE_STRING) {
 							deferredFields.add(scalar);
-							indexer.addControllerField(currentClass.getName(), scalar.getValue().replaceAll("['\"]", ""), type);
+							indexer.addControllerField(fileName, currentClass.getName(), scalar.getValue().replaceAll("['\"]", ""), type);
 						}
 					}
 				}
