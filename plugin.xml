@@ -20,4 +20,9 @@
           class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerField.GoalEvaluatorFactory"
           priority="100"/>
     </extension>
+    <extension point="org.eclipse.php.core.goalEvaluatorFactories">
+        <factory
+          class="com.github.iljas85.CakePHP2EclipsePlugin.view.GoalEvaluatorFactory"
+          priority="100"/>
+    </extension>
 </plugin>
