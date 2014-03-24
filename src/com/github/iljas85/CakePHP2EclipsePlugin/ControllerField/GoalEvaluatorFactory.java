@@ -1,4 +1,4 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import java.util.HashMap;
 
@@ -9,12 +9,11 @@ import org.eclipse.dltk.ti.goals.IGoal;
 import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.internal.core.typeinference.context.TypeContext;
 import org.eclipse.php.internal.core.typeinference.goals.ClassVariableDeclarationGoal;
-import org.eclipse.dltk.core.IType;
 
 import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 
 @SuppressWarnings("restriction")
-public class ControllerFieldGoalEvaluatorFactory implements IGoalEvaluatorFactory {
+public class GoalEvaluatorFactory implements IGoalEvaluatorFactory {
 	
 	// The only method of the interface
 	public GoalEvaluator createEvaluator(IGoal goal) {
@@ -51,12 +50,12 @@ public class ControllerFieldGoalEvaluatorFactory implements IGoalEvaluatorFactor
 					HashMap<String, String> fields = indexer.getFieldsForController(typeName);
 					if (fields.containsKey(variableName))
 					{
-						return new ControllerFieldGoalEvaluator(classVariable, fields.get(variableName));
+						return new CFGoalEvaluator(classVariable, fields.get(variableName));
 					}
 					fields = indexer.getFieldsForController("AppController");
 					if (fields.containsKey(variableName))
 					{
-						return new ControllerFieldGoalEvaluator(classVariable, fields.get(variableName));
+						return new CFGoalEvaluator(classVariable, fields.get(variableName));
 					}
 				} catch (Exception e) {
 					//Log.log()

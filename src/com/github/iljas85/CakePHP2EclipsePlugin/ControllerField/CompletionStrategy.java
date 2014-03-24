@@ -1,4 +1,4 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -26,16 +26,16 @@ import org.eclipse.dltk.internal.core.SourceRange;
  * This code is taken from https://sites.google.com/site/50percentplan/eclipse
  */
 @SuppressWarnings("restriction")
-public class ControllerFieldCompletionStrategy extends ClassMembersStrategy
+public class CompletionStrategy extends ClassMembersStrategy
 		implements ICompletionStrategy {
 
-	public ControllerFieldCompletionStrategy(ICompletionContext context) {
+	public CompletionStrategy(ICompletionContext context) {
 		super(context);
 	}
 
 	@Override
 	public void apply(ICompletionReporter reporter) throws BadLocationException {
-		ControllerFieldCompletionContext context = (ControllerFieldCompletionContext) getContext();
+		CompletionContext context = (CompletionContext) getContext();
 		
 		// As we are implementing object factory we are interesting in
 		// contexts of '->' type only.
@@ -44,7 +44,7 @@ public class ControllerFieldCompletionStrategy extends ClassMembersStrategy
 		}
 		
 		// Initialize data required for editor using code assistance
-		ControllerFieldCompletionContext concreteContext = (ControllerFieldCompletionContext) context;
+		CompletionContext concreteContext = (CompletionContext) context;
 		CompletionRequestor requestor = concreteContext
 				.getCompletionRequestor();
 		String prefix = concreteContext.getPrefix();
@@ -57,7 +57,7 @@ public class ControllerFieldCompletionStrategy extends ClassMembersStrategy
 
 		// Call our own call chain resolver, asking to deduce types for code
 		// fragment we are editing currently
-		IType[] types = ControllerFieldCompletionContextParser.getTypesFor(aContext.getSourceModule(),
+		IType[] types = CompletionContextParser.getTypesFor(aContext.getSourceModule(),
 				statementText, triggerEnd, offset);
 		
 		// Actually add content to completion proposals list
@@ -100,7 +100,7 @@ public class ControllerFieldCompletionStrategy extends ClassMembersStrategy
 	 * @return List of methods
 	 */
 	private List<IMethod> getMethodsFromTypes(IType[] types, String prefix,
-			boolean exactName, ControllerFieldCompletionContext concreteContext) {
+			boolean exactName, CompletionContext concreteContext) {
 
 		List<IMethod> result = new LinkedList<IMethod>();
 

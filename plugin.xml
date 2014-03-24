@@ -9,15 +9,15 @@
     </extension>
     <extension
           point="org.eclipse.php.core.completionContextResolvers">
-        <resolver class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerFieldContextResolver"/>
+        <resolver class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerField.ContextResolver"/>
     </extension>
     <extension
           point="org.eclipse.php.core.completionStrategyFactories">
-        <factory class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerFieldCompletionStrategyFactory"/>
+        <factory class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerField.CompletionStrategyFactory"/>
     </extension>
     <extension point="org.eclipse.php.core.goalEvaluatorFactories">
         <factory
-          class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerFieldGoalEvaluatorFactory"
+          class="com.github.iljas85.CakePHP2EclipsePlugin.ControllerField.GoalEvaluatorFactory"
           priority="100"/>
     </extension>
 </plugin>

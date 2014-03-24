@@ -1,4 +1,4 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import java.util.HashMap;
 import java.util.regex.Pattern;
@@ -10,14 +10,14 @@ import org.eclipse.php.internal.core.util.text.TextSequence;
 import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 
 @SuppressWarnings("restriction")
-public class ControllerFieldResolver {
+public class Resolver {
 
 	private String fieldName = "";
 	private int offset = 0;
 	private HashMap<String, String> fields = new HashMap<String, String>();
 	private String controllerName;
 
-	public ControllerFieldResolver(TextSequence inputString, String className) {
+	public Resolver(TextSequence inputString, String className) {
 
 		if (!className.endsWith("Controller")) {
 			return;

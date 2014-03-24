@@ -1,4 +1,4 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import org.eclipse.dltk.ti.GoalState;
 import org.eclipse.dltk.ti.goals.GoalEvaluator;
@@ -6,11 +6,11 @@ import org.eclipse.dltk.ti.goals.IGoal;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
 
 @SuppressWarnings("restriction")
-public class ControllerFieldGoalEvaluator extends GoalEvaluator {
+public class CFGoalEvaluator extends GoalEvaluator {
 
 	private String fieldType;
 	
-	public ControllerFieldGoalEvaluator(IGoal goal, String fieldType) {
+	public CFGoalEvaluator(IGoal goal, String fieldType) {
 		super(goal);
 		this.fieldType = fieldType;
 	}

@@ -1,4 +1,4 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.dltk.core.IType;
@@ -18,7 +18,7 @@ import org.eclipse.dltk.ti.ISourceModuleContext;
  * This code is taken from https://sites.google.com/site/50percentplan/eclipse
  */
 @SuppressWarnings("restriction")
-public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
+public class CompletionContextParser extends CodeAssistUtils {
 
 	private static final IType[] EMPTY_TYPES_2 = new IType[0];
 	
@@ -44,7 +44,7 @@ public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
 			return EMPTY_TYPES_2;
 		}
 		
-		ControllerFieldResolver factorySearcher = new ControllerFieldResolver(
+		Resolver factorySearcher = new Resolver(
 				statementText, className);
 
 		if (!factorySearcher.containsFactoryCall()) {
@@ -104,7 +104,7 @@ public class ControllerFieldCompletionContextParser extends CodeAssistUtils {
 	}
 	
 	private static IType[] getFactoryType(
-			ControllerFieldResolver brokerSearcher,
+			Resolver brokerSearcher,
 			ISourceModule sourceModule, int offset) {
 
 		IEvaluatedType evaluatedType = brokerSearcher.getClassType();

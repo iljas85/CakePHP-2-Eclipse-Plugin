@@ -1,11 +1,11 @@
-package com.github.iljas85.CakePHP2EclipsePlugin;
+package com.github.iljas85.CakePHP2EclipsePlugin.ControllerField;
 
 import org.eclipse.dltk.core.CompletionRequestor;
 import org.eclipse.dltk.core.ISourceModule;
 import org.eclipse.php.internal.core.codeassist.contexts.ClassMemberContext;
 
 @SuppressWarnings("restriction")
-public class ControllerFieldCompletionContext extends ClassMemberContext {
+public class CompletionContext extends ClassMemberContext {
 	public boolean isValid(ISourceModule sourceModule, int offset,
 			CompletionRequestor requestor) {
 		
