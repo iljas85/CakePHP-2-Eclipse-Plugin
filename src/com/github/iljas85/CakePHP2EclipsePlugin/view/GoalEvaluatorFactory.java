@@ -1,21 +1,18 @@
 package com.github.iljas85.CakePHP2EclipsePlugin.view;
 
-import java.util.HashMap;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.dltk.ti.IContext;
 import org.eclipse.dltk.ti.IGoalEvaluatorFactory;
 import org.eclipse.dltk.ti.goals.GoalEvaluator;
 import org.eclipse.dltk.ti.goals.IGoal;
-import org.eclipse.dltk.ti.types.IEvaluatedType;
 import org.eclipse.php.internal.core.typeinference.context.FileContext;
-import org.eclipse.php.internal.core.typeinference.context.TypeContext;
-import org.eclipse.php.internal.core.typeinference.goals.ClassVariableDeclarationGoal;
 import org.eclipse.php.internal.core.typeinference.goals.GlobalVariableReferencesGoal;
 
 import com.github.iljas85.CakePHP2EclipsePlugin.PathUtils;
-import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 
+/**
+ * code complete when typing $this-> in the views
+ */
 @SuppressWarnings("restriction")
 public class GoalEvaluatorFactory implements IGoalEvaluatorFactory {
 	

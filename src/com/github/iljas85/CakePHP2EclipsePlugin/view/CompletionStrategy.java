@@ -21,6 +21,9 @@ import org.eclipse.dltk.internal.core.SourceRange;
 import com.github.iljas85.CakePHP2EclipsePlugin.PathUtils;
 import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 
+/**
+ * code complete for the variables exported from controller methods by $this->set('var', $var); statement
+ */
 @SuppressWarnings("restriction")
 public class CompletionStrategy extends GlobalVariablesStrategy
 		implements ICompletionStrategy {
@@ -52,6 +55,12 @@ public class CompletionStrategy extends GlobalVariablesStrategy
 		}
 	}
 
+	/**
+	 * variables from controller method
+	 * @param abstractContext
+	 * @param prefix
+	 * @return
+	 */
 	private ArrayList<IField> collectVariables(
 			AbstractCompletionContext abstractContext, String prefix) {
 		CompletionRequestor requestor = abstractContext
@@ -86,6 +95,13 @@ public class CompletionStrategy extends GlobalVariablesStrategy
 		return fields;
 	}
 	
+	/**
+	 * is the variable matches prefix 
+	 * @param var
+	 * @param prefix
+	 * @param matchRule
+	 * @return
+	 */
 	private boolean isProper(String var, String prefix, MatchRule matchRule) {
 		if (matchRule == MatchRule.EXACT) {
 			return var.equalsIgnoreCase(prefix);

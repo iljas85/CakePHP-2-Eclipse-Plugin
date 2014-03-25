@@ -38,14 +38,20 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 			fileName = getSourceModule().getFileName();
 			isController = currentClass.getName().endsWith("Controller");
 			if (isController) {
-				cleanClassFields();
+				cleanClassFieldsAndVariables();
 				addDefaultModel();
 			}
 		}
 		return true;
 	}
 	
-	private void cleanClassFields() throws Exception {
+	/**
+	 * Removes controller magic fields 
+	 * and controller methods exported variables
+	 * collected before
+	 * @throws Exception
+	 */
+	private void cleanClassFieldsAndVariables() throws Exception {
 		CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
 		indexer.removeControllerFields(fileName, currentClass.getName());
 		indexer.removeVariables(fileName, currentClass.getName());
@@ -132,6 +138,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	}
 	
 	public boolean visit(PHPCallExpression s) throws Exception {
+		// looks for $this->set('var', $var);
 		String name = s.getName();
 		ASTNode r = s.getReceiver();
 		if (r instanceof VariableReference) {

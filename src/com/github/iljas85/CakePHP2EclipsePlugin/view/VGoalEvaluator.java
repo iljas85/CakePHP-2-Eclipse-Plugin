@@ -10,9 +10,9 @@ public class VGoalEvaluator extends GoalEvaluator {
 
 	private String viewType;
 	
-	public VGoalEvaluator(IGoal goal, String fieldType) {
+	public VGoalEvaluator(IGoal goal, String viewType) {
 		super(goal);
-		this.viewType = fieldType;
+		this.viewType = viewType;
 	}
 	
 	@Override

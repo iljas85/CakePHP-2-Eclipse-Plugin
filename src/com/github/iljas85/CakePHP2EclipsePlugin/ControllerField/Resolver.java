@@ -40,6 +40,9 @@ public class Resolver {
 		}
 	}
 	
+	/** 
+	 * gets magic fields from controller
+	 */
 	private void collectFields() {
 		try {
 			CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();

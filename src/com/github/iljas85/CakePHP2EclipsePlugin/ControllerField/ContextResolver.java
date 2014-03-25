@@ -9,6 +9,6 @@ public class ContextResolver extends CompletionContextResolver
 	implements ICompletionContextResolver {
 
 	public ICompletionContext[] createContexts() {
-        return new ICompletionContext[] { new CompletionContext() };
-    }
+		return new ICompletionContext[] { new CompletionContext() };
+	}
 }

@@ -12,6 +12,9 @@ import org.eclipse.php.internal.core.typeinference.goals.ClassVariableDeclaratio
 
 import com.github.iljas85.CakePHP2EclipsePlugin.index.CakePHP2Indexer;
 
+/**
+ * hints the type of the controller magic field
+ */
 @SuppressWarnings("restriction")
 public class GoalEvaluatorFactory implements IGoalEvaluatorFactory {
 	
