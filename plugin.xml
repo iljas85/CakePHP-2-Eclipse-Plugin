@@ -25,4 +25,12 @@
           class="com.github.iljas85.CakePHP2EclipsePlugin.view.GoalEvaluatorFactory"
           priority="100"/>
     </extension>
+    <extension
+          point="org.eclipse.php.core.completionContextResolvers">
+        <resolver class="com.github.iljas85.CakePHP2EclipsePlugin.view.ContextResolver"/>
+    </extension>
+    <extension
+          point="org.eclipse.php.core.completionStrategyFactories">
+        <factory class="com.github.iljas85.CakePHP2EclipsePlugin.view.CompletionStrategyFactory"/>
+    </extension>
 </plugin>

@@ -1,13 +1,12 @@
 package com.github.iljas85.CakePHP2EclipsePlugin.index;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
-
-import com.github.iljas85.CakePHP2EclipsePlugin.test.Employee;
 
 public class CakePHP2Indexer {
 
@@ -45,24 +44,9 @@ public class CakePHP2Indexer {
 		return result;
 	}
 	
-	public void addControllerField(String fileName, String controllerName, String fieldName, ControllerFieldType fieldType) {
-		TypedQuery<Controller> query = em
-			.createQuery(
-				"SELECT c FROM Controller c WHERE c.name = :name AND c.fileName = :fileName",
-				Controller.class)
-			.setParameter("name", controllerName)
-			.setParameter("fileName", fileName);
-		Controller ctrl = null;
-		try {
-			ctrl = query.getSingleResult();
-		} catch (NoResultException e) {
-			em.getTransaction().begin();
-			ctrl = new Controller();
-			ctrl.setName(controllerName);
-			ctrl.setFileName(fileName);
-			em.persist(ctrl);
-			em.getTransaction().commit();
-		}
+	public void addControllerField(String fileName, String controllerName, 
+			String fieldName, ControllerFieldType fieldType) {
+		Controller ctrl = getController(fileName, controllerName);
 		
 		
 		TypedQuery<ControllerField> query2 = em
@@ -87,8 +71,30 @@ public class CakePHP2Indexer {
 			em.getTransaction().commit();
 		}
 	}
+
+	private Controller getController(String fileName, String controllerName) {
+		TypedQuery<Controller> query = em
+			.createQuery(
+				"SELECT c FROM Controller c WHERE c.name = :name AND c.fileName = :fileName",
+				Controller.class)
+			.setParameter("name", controllerName)
+			.setParameter("fileName", fileName);
+		Controller ctrl = null;
+		try {
+			ctrl = query.getSingleResult();
+		} catch (NoResultException e) {
+			em.getTransaction().begin();
+			ctrl = new Controller();
+			ctrl.setName(controllerName);
+			ctrl.setFileName(fileName);
+			em.persist(ctrl);
+			em.getTransaction().commit();
+		}
+		return ctrl;
+	}
 	
-	private String getClassNameForControllerField(String fieldName, ControllerFieldType fieldType) {
+	private String getClassNameForControllerField(String fieldName, 
+			ControllerFieldType fieldType) {
 		String postfix = "";
 		if (fieldType == ControllerFieldType.HELPER)
 			postfix = "Helper";
@@ -108,5 +114,66 @@ public class CakePHP2Indexer {
 			.setParameter("fileName", fileName)
 			.executeUpdate();
 		em.getTransaction().commit();
+	}
+	
+	public void removeVariables(String fileName, String controllerName) {
+		em.getTransaction().begin();
+		em.createQuery("DELETE FROM VariableForView v " +
+				"WHERE v.controller.name = :name AND v.controller.fileName = :fileName")
+			.setParameter("name", controllerName)
+			.setParameter("fileName", fileName)
+			.executeUpdate();
+		em.getTransaction().commit();
+	}
+
+	public List<String> getVariables(String controllerName, String methodName) {
+		TypedQuery<VariableForView> query = em
+			.createQuery(
+				"SELECT v FROM VariableForView v WHERE v.controller.name = :cname AND v.methodName = :mname",
+				VariableForView.class)
+			.setParameter("cname", controllerName)
+			.setParameter("mname", methodName);
+		List<VariableForView> emps = query.getResultList();
+		
+		ArrayList<String> result = new ArrayList<String>();
+		
+		for (VariableForView var: emps) {
+			result.add(var.getName());
+		}
+		
+		return result;
+		
+		/*ArrayList<String> result = new ArrayList<String>();
+		result.add(controllerName);
+		result.add(methodName);
+		return result;*/
+	}
+
+	public void addVariable(String fileName, String controllerName, String method,
+			String var) {
+		
+		Controller ctrl = getController(fileName, controllerName);
+		
+		
+		TypedQuery<VariableForView> query2 = em
+				.createQuery(
+					"SELECT v FROM VariableForView v WHERE v.name = :vname AND v.methodName = :mname AND v.controller.name = :cname AND v.controller.fileName = :fileName",
+					VariableForView.class)
+				.setParameter("cname", controllerName)
+				.setParameter("vname", var)
+				.setParameter("mname", method)
+				.setParameter("fileName", fileName);
+		VariableForView variable = null;
+		try {
+			variable = query2.getSingleResult();
+		} catch (NoResultException e) {
+			em.getTransaction().begin();
+			variable = new VariableForView();
+			variable.setName(var);
+			variable.setMethodName(method);
+			variable.setController(ctrl);
+			em.persist(variable);
+			em.getTransaction().commit();
+		}
 	}
 }

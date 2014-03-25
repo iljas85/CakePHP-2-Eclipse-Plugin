@@ -12,7 +12,9 @@ public class Controller {
 	private String name;
 	private String fileName;
 	@OneToMany(mappedBy="controller",fetch=FetchType.LAZY)
-	private Collection<ControllerField> controllerFields = new ArrayList<ControllerField>();;
+	private Collection<ControllerField> controllerFields = new ArrayList<ControllerField>();
+	@OneToMany(mappedBy="controller",fetch=FetchType.LAZY)
+	private Collection<VariableForView> variablesForViews = new ArrayList<VariableForView>();
 	
 	public Controller() {}
 	public Controller(int id) { this.id = id; }
@@ -24,4 +26,5 @@ public class Controller {
 	public String getFileName() { return fileName; }
 	public void setFileName(String fileName) { this.fileName = fileName; }
 	public Collection<ControllerField> getControllerFields() { return controllerFields; }
+	public Collection<VariableForView> getVariablesForViews() { return variablesForViews; }
 }

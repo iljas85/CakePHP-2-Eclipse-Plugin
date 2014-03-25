@@ -6,11 +6,16 @@ import java.util.Set;
 import org.eclipse.php.core.compiler.PHPSourceElementRequestorExtension;
 import org.eclipse.dltk.ast.Modifiers;
 import org.eclipse.dltk.ast.declarations.TypeDeclaration;
+import org.eclipse.dltk.ast.expressions.CallArgumentsList;
 import org.eclipse.dltk.ast.expressions.Expression;
+import org.eclipse.dltk.ast.references.VariableReference;
+import org.eclipse.dltk.ast.ASTNode;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayCreation;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ArrayElement;
 import org.eclipse.php.internal.core.compiler.ast.nodes.ClassDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPCallExpression;
 import org.eclipse.php.internal.core.compiler.ast.nodes.PHPFieldDeclaration;
+import org.eclipse.php.internal.core.compiler.ast.nodes.PHPMethodDeclaration;
 import org.eclipse.php.internal.core.compiler.ast.nodes.Scalar;
 import org.eclipse.dltk.compiler.ISourceElementRequestor;
 import org.modeshape.common.text.Inflector;
@@ -24,13 +29,18 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	private ClassDeclaration currentClass;
 	private Set<Scalar> deferredFields = new HashSet<Scalar>();
 	private String fileName = "";
+	private boolean isController;
+	private String currentMethod = "";
 	
 	public boolean visit(TypeDeclaration s) throws Exception {
 		if (s instanceof ClassDeclaration) {
 			currentClass = (ClassDeclaration) s;
 			fileName = getSourceModule().getFileName();
-			cleanClassFields();
-			addDefaultModel();
+			isController = currentClass.getName().endsWith("Controller");
+			if (isController) {
+				cleanClassFields();
+				addDefaultModel();
+			}
 		}
 		return true;
 	}
@@ -38,6 +48,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	private void cleanClassFields() throws Exception {
 		CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
 		indexer.removeControllerFields(fileName, currentClass.getName());
+		indexer.removeVariables(fileName, currentClass.getName());
 	}
 	
 	/**
@@ -78,7 +89,7 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 	
 	public boolean visit(PHPFieldDeclaration s) throws Exception {
 		//TODO consider case Js => JsPrototype
-		if (s.getVariableValue() instanceof ArrayCreation) {
+		if (isController && s.getVariableValue() instanceof ArrayCreation) {
 			ControllerFieldType type = ControllerFieldType.MODEL;
 			CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
 			boolean magicField = false;
@@ -114,11 +125,62 @@ public class SourceElementRequestor extends PHPSourceElementRequestorExtension {
 		return true;
 	}
 	
-	public boolean visitGeneral(org.eclipse.dltk.ast.ASTNode node) throws Exception {
+	public boolean visit(PHPMethodDeclaration s) throws Exception {
+		currentMethod = s.getName();
+		
+		return true;
+	}
+	
+	public boolean visit(PHPCallExpression s) throws Exception {
+		String name = s.getName();
+		ASTNode r = s.getReceiver();
+		if (r instanceof VariableReference) {
+			VariableReference receiver = (VariableReference) r;
+			if (isController 
+					&& !currentMethod.isEmpty()
+					&& receiver.getName().equals("$this") 
+					&& name.equals("set")) {
+				String var = "";
+				CallArgumentsList list = s.getArgs();
+				for (Object arg: list.getChilds()) {
+					if (arg instanceof Scalar) {
+						var = ((Scalar) arg).getValue().replaceAll("['\"]", "");
+					}
+					break;
+				}
+				CakePHP2Indexer indexer = CakePHP2Indexer.getInstance();
+				indexer.addVariable(fileName, currentClass.getName(), currentMethod, var);
+			}
+		}
+		
+		return true;
+	}
+	
+	public boolean visitGeneral(ASTNode node) throws Exception {
 		if (node instanceof PHPFieldDeclaration) {
 			return visit((PHPFieldDeclaration)node);
 		}
+		if (node instanceof PHPMethodDeclaration) {
+			return visit((PHPMethodDeclaration)node);
+		}
+		if (node instanceof PHPCallExpression) {
+			return visit((PHPCallExpression)node);
+		}
 		
 		return super.visitGeneral(node);
+	}
+	
+	public boolean endvisit(PHPMethodDeclaration node) {
+		currentMethod = "";
+		
+		return true;
+	}
+	
+	public boolean endvisit(ASTNode node) throws Exception {
+		if (node instanceof PHPMethodDeclaration) {
+			return endvisit((PHPMethodDeclaration)node);
+		}
+		
+		return super.endvisit(node);
 	}
 }
