@@ -6,3 +6,6 @@ variables listed in the fields <code>$components</code>, <code>$helpers</code>, 
 2. autocomplete in views<br>
 properties and methods of the class <code>View</code> is availabe in templates<br>
 and variables added like <code>$this->set('var', $var);</code> in the methods of controllers is availabe in its views
+
+### Update site
+http://iljas85.github.io/updatesite/
