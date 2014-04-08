@@ -6,23 +6,23 @@ import org.eclipse.dltk.ti.goals.IGoal;
 import org.eclipse.php.internal.core.typeinference.PHPClassType;
 
 @SuppressWarnings("restriction")
-public class VGoalEvaluator extends GoalEvaluator {
+public class VThisGoalEvaluator extends GoalEvaluator {
 
 	private String viewType;
 	
-	public VGoalEvaluator(IGoal goal, String viewType) {
+	public VThisGoalEvaluator(IGoal goal, String viewType) {
 		super(goal);
 		this.viewType = viewType;
 	}
 	
 	@Override
 	public IGoal[] init() {
-		return null;
+		return IGoal.NO_GOALS;
 	}
 
 	@Override
 	public IGoal[] subGoalDone(IGoal subgoal, Object result, GoalState state) {
-		return null;
+		return IGoal.NO_GOALS;
 	}
 
 	@Override

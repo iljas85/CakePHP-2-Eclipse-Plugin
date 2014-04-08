@@ -1,7 +1,8 @@
 package com.github.iljas85.CakePHP2EclipsePlugin.view;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.dltk.core.IField;
@@ -75,7 +76,7 @@ public class CompletionStrategy extends GlobalVariablesStrategy
 		String methodName = getMethodName(abstractContext);
 		
 		CakePHP2Indexer indexer;
-		List<String> variables = null;
+		Map<String, Set<String>> variables = null;
 		try {
 			indexer = CakePHP2Indexer.getInstance();
 			variables = indexer.getVariables(controllerName, methodName);
@@ -84,7 +85,7 @@ public class CompletionStrategy extends GlobalVariablesStrategy
 		}
 		
 		ArrayList<IField> fields = new ArrayList<IField>();
-		for (String var: variables) {
+		for (String var: variables.keySet()) {
 			if (isProper("$" + var, prefix, matchRule)) {
 				fields.add(
 					new FakeField((ModelElement) abstractContext

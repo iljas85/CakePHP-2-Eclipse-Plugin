@@ -33,4 +33,10 @@
           point="org.eclipse.php.core.completionStrategyFactories">
         <factory class="com.github.iljas85.CakePHP2EclipsePlugin.view.CompletionStrategyFactory"/>
     </extension>
+    <extension
+         point="org.eclipse.php.core.phpIndexingVisitors">
+      <visitor
+            class="com.github.iljas85.CakePHP2EclipsePlugin.IndexingVisitorExtension">
+      </visitor>
+   </extension>
 </plugin>

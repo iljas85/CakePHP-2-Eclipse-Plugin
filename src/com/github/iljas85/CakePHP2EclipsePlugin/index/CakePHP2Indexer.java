@@ -2,7 +2,10 @@ package com.github.iljas85.CakePHP2EclipsePlugin.index;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -126,7 +129,7 @@ public class CakePHP2Indexer {
 		em.getTransaction().commit();
 	}
 
-	public List<String> getVariables(String controllerName, String methodName) {
+	public Map<String, Set<String>> getVariables(String controllerName, String methodName) {
 		TypedQuery<VariableForView> query = em
 			.createQuery(
 				"SELECT v FROM VariableForView v WHERE v.controller.name = :cname AND v.methodName = :mname",
@@ -135,32 +138,41 @@ public class CakePHP2Indexer {
 			.setParameter("mname", methodName);
 		List<VariableForView> emps = query.getResultList();
 		
-		ArrayList<String> result = new ArrayList<String>();
+		HashMap<String, Set<String>> result = new HashMap<String, Set<String>>();
 		
 		for (VariableForView var: emps) {
-			result.add(var.getName());
+			//result.put(var.getName(), var.getType());
+			putVariable(result, var.getName(), var.getType());
 		}
 		
 		return result;
+	}
+	
+	private void putVariable(Map<String, Set<String>> result, String name, String type) {
+		if (!result.containsKey(name)) {
+			result.put(name, new HashSet<String>());
+		}
 		
-		/*ArrayList<String> result = new ArrayList<String>();
-		result.add(controllerName);
-		result.add(methodName);
-		return result;*/
+		Set<String> types = result.get(name);
+		if (!types.contains(type)) {
+			types.add(type);
+			result.put(name, types);
+		}
 	}
 
 	public void addVariable(String fileName, String controllerName, String method,
-			String var) {
+			String varName, String type) {
 		
 		Controller ctrl = getController(fileName, controllerName);
 		
 		
 		TypedQuery<VariableForView> query2 = em
 				.createQuery(
-					"SELECT v FROM VariableForView v WHERE v.name = :vname AND v.methodName = :mname AND v.controller.name = :cname AND v.controller.fileName = :fileName",
+					"SELECT v FROM VariableForView v WHERE v.name = :vname AND v.type = :vtype AND v.methodName = :mname AND v.controller.name = :cname AND v.controller.fileName = :fileName",
 					VariableForView.class)
 				.setParameter("cname", controllerName)
-				.setParameter("vname", var)
+				.setParameter("vname", varName)
+				.setParameter("vtype", type)
 				.setParameter("mname", method)
 				.setParameter("fileName", fileName);
 		VariableForView variable = null;
@@ -169,7 +181,8 @@ public class CakePHP2Indexer {
 		} catch (NoResultException e) {
 			em.getTransaction().begin();
 			variable = new VariableForView();
-			variable.setName(var);
+			variable.setName(varName);
+			variable.setType(type);
 			variable.setMethodName(method);
 			variable.setController(ctrl);
 			em.persist(variable);
